@@ -21,7 +21,7 @@ public:
 	UCommonActivatableWidgetContainerBase* FindWidgetStackByTag(const FGameplayTag& InStackTag) const;
 
 protected:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = "Frontend")
 	void RegisterWidgetStack(UPARAM(meta = (Category = "Frontend.WidgetStack")) FGameplayTag InStackTag, UCommonActivatableWidgetContainerBase* InStack);
 
 private:
