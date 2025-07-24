@@ -37,6 +37,7 @@ public:
 	void PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag, TSoftClassPtr<UWidget_ActivatableBase> InSoftWidgetClass, TFunction<void(EAsyncPushWidgetState, UWidget_ActivatableBase*)> AsyncPushStateCallback);
 
 private:
+
 	UPROPERTY(Transient)
 	TObjectPtr<UWidget_PrimaryLayout> CreatedPrimaryLayout;
 };
