@@ -41,7 +41,7 @@ void UFrontendUISubsystem::RegisterCreatedPrimaryLayoutWidget(UWidget_PrimaryLay
 
 	CreatedPrimaryLayout = InCreatedWidget;
 
-	Debug::Print(TEXT("Primary layout widget stored"));
+	// Debug::Print(TEXT("Primary layout widget stored"));
 }
 
 void UFrontendUISubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidgetStackTag, TSoftClassPtr<UWidget_ActivatableBase> InSoftWidgetClass, TFunction<void(EAsyncPushWidgetState, UWidget_ActivatableBase*)> AsyncPushStateCallback)
@@ -51,8 +51,7 @@ void UFrontendUISubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidg
 	UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(
 		InSoftWidgetClass.ToSoftObjectPath(),
 		FStreamableDelegate::CreateLambda(
-			[InSoftWidgetClass, this, InWidgetStackTag, AsyncPushStateCallback]() 
-			{
+			[InSoftWidgetClass, this, InWidgetStackTag, AsyncPushStateCallback]() {
 				UClass* LoadedWidgetClass = InSoftWidgetClass.Get();
 
 				check(LoadedWidgetClass && CreatedPrimaryLayout);
@@ -61,8 +60,7 @@ void UFrontendUISubsystem::PushSoftWidgetToStackAsync(const FGameplayTag& InWidg
 
 				UWidget_ActivatableBase* CreatedWidget = FoundWidgetStack->AddWidget<UWidget_ActivatableBase>(
 					LoadedWidgetClass,
-					[AsyncPushStateCallback](UWidget_ActivatableBase& CreatedWidgetInstance) 
-					{
+					[AsyncPushStateCallback](UWidget_ActivatableBase& CreatedWidgetInstance) {
 						AsyncPushStateCallback(EAsyncPushWidgetState::OnCreatedBeforePush, &CreatedWidgetInstance);
 					});
 
@@ -94,8 +92,7 @@ void UFrontendUISubsystem::PushConfirmScreenToModalStackAsync(EConfirmScreenType
 	PushSoftWidgetToStackAsync(
 		FrontendTags::Frontend_WidgetStack_Modal,
 		UFrontendFunctionLibrary::GetFrontendSoftWidgetClassByTag(FrontendTags::Frontend_Widget_ConfirmScreen),
-		[CreatedInfoObject, ButtonClickedCallback](EAsyncPushWidgetState InPushState, UWidget_ActivatableBase* PushedWidget) 
-		{
+		[CreatedInfoObject, ButtonClickedCallback](EAsyncPushWidgetState InPushState, UWidget_ActivatableBase* PushedWidget) {
 			if (InPushState == EAsyncPushWidgetState::OnCreatedBeforePush)
 			{
 				UWidget_ConfirmScreen* CreatedConfirmScreen = CastChecked<UWidget_ConfirmScreen>(PushedWidget);

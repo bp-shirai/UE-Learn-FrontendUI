@@ -8,6 +8,7 @@
 
 #include "Widgets/Components/FrontendCommonButtonBase.h"
 
+
 UConfirmScreenInfoObject* UConfirmScreenInfoObject::CreateOKScreen(const FText& InScreenTitle, const FText& InScreenMessage)
 {
 	UConfirmScreenInfoObject* InfoObject = NewObject<UConfirmScreenInfoObject>();
@@ -74,49 +75,62 @@ void UWidget_ConfirmScreen::InitConfirmScreen(UConfirmScreenInfoObject* InScreen
 	{
 		// Clearing the old buttons the entry box has. The widget type for the entry box is specified in the child widget blueprint.
 		DynamicEntryBox_Buttons->Reset<UFrontendCommonButtonBase>(
-			[](UFrontendCommonButtonBase& ExistingButton) 
-            {
+			[](UFrontendCommonButtonBase& ExistingButton)
+			 {
 				ExistingButton.OnClicked().Clear();
 			});
 	}
 
 	check(!InScreenInfoObject->AvailableScreenButtons.IsEmpty());
 
-	for (const FConfirmScreenButtonInfo& AvailableButtonInfo : InScreenInfoObject->AvailableScreenButtons)
+	for (const FConfirmScreenButtonInfo& ButtonInfo : InScreenInfoObject->AvailableScreenButtons)
 	{
-		FDataTableRowHandle InputActionRowHandle;
+		/* FDataTableRowHandle InputActionRowHandle;
 
 		switch (AvailableButtonInfo.ConfirmScreenButtonType)
 		{
-/* 			case EConfirmScreenButtonType::Confirmed:
+			case EConfirmScreenButtonType::Confirmed:
 				InputActionRowHandle = ICommonInputModule::GetSettings().GetDefaultClickAction();
-				break; */
-
-			case EConfirmScreenButtonType::Canceled:
-				InputActionRowHandle = ICommonInputModule::GetSettings().GetDefaultBackAction();
 				break;
-
+			case EConfirmScreenButtonType::Canceled:
 			case EConfirmScreenButtonType::Closed:
 				InputActionRowHandle = ICommonInputModule::GetSettings().GetDefaultBackAction();
 				break;
-		}
+		}*/
 
-		UFrontendCommonButtonBase* AddedButton = DynamicEntryBox_Buttons->CreateEntry<UFrontendCommonButtonBase>();
-		AddedButton->SetButtonText(AvailableButtonInfo.ButtonTextToDisplay);
-		/* AddedButton->SetTriggeredInputAction(InputActionRowHandle); */
-		AddedButton->SetTriggeringInputAction(InputActionRowHandle);
-		AddedButton->OnClicked().AddLambda(
-			[ClickedButtonCallback, AvailableButtonInfo, this]() 
-            {
-				ClickedButtonCallback(AvailableButtonInfo.ConfirmScreenButtonType);
+		UFrontendCommonButtonBase* NewButton = DynamicEntryBox_Buttons->CreateEntry<UFrontendCommonButtonBase>();
+		NewButton->SetButtonText(ButtonInfo.ButtonTextToDisplay);
+
+		/*** Alternative use Enhanced Input!
+		NewButton->SetTriggeringEnhancedInputAction(ICommonInputModule::GetSettings().GetEnhancedInputBackAction());
+		***/
+		if (ButtonInfo.ConfirmScreenButtonType == EConfirmScreenButtonType::Canceled || ButtonInfo.ConfirmScreenButtonType == EConfirmScreenButtonType::Closed)
+		{
+			NewButton->SetTriggeringInputAction(ICommonInputModule::GetSettings().GetDefaultBackAction());
+		}
+		NewButton->OnClicked().AddLambda(
+			[ClickedButtonCallback, ButtonInfo, this]() 
+			{
+				ClickedButtonCallback(ButtonInfo.ConfirmScreenButtonType);
 
 				DeactivateWidget();
 			});
 	}
 
-    if (DynamicEntryBox_Buttons->GetNumEntries() != 0)
-    {
-        // Set focus on the last button. So if there are two buttons, one is yes, one is no. Our gamepad will focus on the No button
-        DynamicEntryBox_Buttons->GetAllEntries().Last()->SetFocus();
-    }
+	if (DynamicEntryBox_Buttons->GetNumEntries() != 0)
+	{
+		// Set focus on the last button. So if there are two buttons, one is yes, one is no. Our gamepad will focus on the No button
+		DynamicEntryBox_Buttons->GetAllEntries().Last()->SetFocus();
+	}
+}
+
+UWidget * UWidget_ConfirmScreen::NativeGetDesiredFocusTarget() const
+{
+	// Set focus on the last button so Gamepad has an option to start with.
+	if (DynamicEntryBox_Buttons->GetNumEntries() != 0)
+	{
+		return DynamicEntryBox_Buttons->GetAllEntries().Last();
+	}
+
+	return Super::NativeGetDesiredFocusTarget();
 }
