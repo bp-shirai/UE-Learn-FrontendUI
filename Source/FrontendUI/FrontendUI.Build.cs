@@ -17,7 +17,10 @@ public class FrontendUI : ModuleRules
 			"EnhancedInput",
 			"GameplayTags",
 			"UMG",
-			"CommonInput"
+			"CommonInput",
+			"PropertyPath",
+			"PreLoadScreen",
+			"CommonUI"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });

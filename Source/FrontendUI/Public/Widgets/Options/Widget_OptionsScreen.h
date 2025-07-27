@@ -8,6 +8,7 @@
 
 class UOptionsDataRegistry;
 class UFrontendTabListWidgetBase;
+class UFrontendCommonListView;
 
 /**
  *
@@ -33,11 +34,14 @@ private:
 	void OnBackBoundActionTriggered();
 
 	UFUNCTION()
-	void OnOptionsTabSelected(FName TabId);
+	void OnOptionsTabSelected(FName TabID);
 
 	//***** Bound Widgets *****/
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UFrontendTabListWidgetBase> TabListWidget_OptionsTabs;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UFrontendCommonListView> CommonListView_OptionsList;
 	//***** Bound Widgets *****/
 
 	// Handle the creation of data in the options screen. Direct access to this variable is forbidden

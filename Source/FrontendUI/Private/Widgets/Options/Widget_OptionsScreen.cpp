@@ -8,8 +8,8 @@
 #include "Widgets/Options/OptionsDataRegistry.h"
 #include "Widgets/Components/FrontendTabListWidgetBase.h"
 #include "Widgets/Options/DataObjects/ListDataObject_Collection.h"
+#include "Widgets/Components/FrontendCommonListView.h"
 #include "FrontendDebugHelper.h"
-
 
 void UWidget_OptionsScreen::NativeOnInitialized()
 {
@@ -76,7 +76,16 @@ void UWidget_OptionsScreen::OnBackBoundActionTriggered()
 	DeactivateWidget();
 }
 
-void UWidget_OptionsScreen::OnOptionsTabSelected(FName TabId)
+void UWidget_OptionsScreen::OnOptionsTabSelected(FName TabID)
 {
-	
+	TArray<UListDataObject_Base*> FoundListSourceItem = GetOrCreateDataRegistry()->GetListSourceItemsBySelectedTabID(TabID);
+
+ 	CommonListView_OptionsList->SetListItems(FoundListSourceItem);
+	CommonListView_OptionsList->RequestRefresh();
+
+	if (CommonListView_OptionsList->GetNumItems() != 0)
+	{
+		CommonListView_OptionsList->NavigateToIndex(0);
+		CommonListView_OptionsList->SetSelectedIndex(0);
+	}
 }
