@@ -2,6 +2,9 @@
 
 #include "Widgets/Options/DataObjects/ListDataObject_String.h"
 
+#include "Widgets/Options/OptionsDataInteractionHelper.h"
+#include "FrontendDebugHelper.h"
+
 void UListDataObject_String::AddDynamicOption(const FString &InStringValue, const FText &InDisplayText)
 {
     AvailableOptionsStringArray.Add(InStringValue);
@@ -16,6 +19,14 @@ void UListDataObject_String::OnDataObjectInitialized()
     }
 
     // Read from the saved string value and use it to set the CurrentStringValue
+    if (DataDynamicGetter)
+    {
+        if (!DataDynamicGetter->GetValueAsString().IsEmpty())
+        {
+            CurrentStringValue = DataDynamicGetter->GetValueAsString();
+        }
+    }
+
     if (!TrySetDisplayTextFromStringValue(CurrentStringValue))
     {
         CurrentDisplayText = FText::FromString(TEXT("Invalid Option"));
@@ -55,10 +66,17 @@ void UListDataObject_String::AdvanceToNextOption()
 
     TrySetDisplayTextFromStringValue(CurrentStringValue);
 
-    NotifyListDataModifed(this);
+    if (DataDynamicSetter)
+    {
+        DataDynamicSetter->SetValueFromString(CurrentStringValue);
+
+        //Debug::Print(TEXT("DataDynamicSetter is used. the latest value from Getter: ") + DataDynamicGetter->GetValueAsString());
+
+        NotifyListDataModifed(this);
+    }
 }
 
-void UListDataObject_String::BackToPreviousOption() 
+void UListDataObject_String::BackToPreviousOption()
 {
     if (AvailableOptionsStringArray.IsEmpty() || AvailableOptionsTextArray.IsEmpty())
     {
@@ -80,5 +98,10 @@ void UListDataObject_String::BackToPreviousOption()
 
     TrySetDisplayTextFromStringValue(CurrentStringValue);
 
-    NotifyListDataModifed(this);
+    if (DataDynamicSetter)
+    {
+        DataDynamicSetter->SetValueFromString(CurrentStringValue);
+
+        NotifyListDataModifed(this);
+    }
 }

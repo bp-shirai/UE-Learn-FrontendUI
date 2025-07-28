@@ -3,6 +3,7 @@
 
 #include "Widgets/Options/DataObjects/ListDataObject_Base.h"
 
+#include "FrontendSettings/FrontendGameUserSettings.h"
 
 void UListDataObject_Base::InitDataObject()
 {
@@ -15,4 +16,10 @@ void UListDataObject_Base::OnDataObjectInitialized()
 void UListDataObject_Base::NotifyListDataModifed(UListDataObject_Base* ModifiedData, EOptionsListDataModifyReason ModifyReason)
 {
     OnListDataModified.Broadcast(ModifiedData, ModifyReason);
+
+    if (bShouldApplyChangedImmediately)
+    {
+        UFrontendGameUserSettings::Get()->ApplyNonResolutionSettings();
+        //UFrontendGameUserSettings::Get()->ApplySettings(true);
+    }
 }

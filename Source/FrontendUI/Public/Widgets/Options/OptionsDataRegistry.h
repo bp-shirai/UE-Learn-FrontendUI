@@ -8,7 +8,7 @@
 
 class UListDataObject_Collection;
 class UListDataObject_Base;
-
+class ULocalPlayer;
 /**
  *
  */

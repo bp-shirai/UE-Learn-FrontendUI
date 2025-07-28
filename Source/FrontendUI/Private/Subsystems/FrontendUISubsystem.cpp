@@ -12,6 +12,10 @@
 #include "FrontendFunctionLibrary.h"
 #include "FrontendDebugHelper.h"
 
+#include "Engine.h"
+#include "Engine/GameInstance.h"
+
+
 UFrontendUISubsystem* UFrontendUISubsystem::Get(const UObject* WorldContextObject)
 {
 	if (GEngine)

@@ -19,6 +19,11 @@ class FRONTENDUI_API UWidget_ListEntry_Base : public UCommonUserWidget, public I
 {
     GENERATED_BODY()
 
+public:
+    UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On List Entry Widget Hovered"))
+    void BP_OnListEntryWidgetHovered(bool bWasHovered, bool bIsEntryWidgetStillSelected);
+    void NativeOnListEntryWidgetHovered(bool bWasHovered);
+
 protected:
     //~ Begin IUserObjectListEntry Interface
     virtual void NativeOnListItemObjectSet(UObject *ListItemObject) override;
@@ -29,6 +34,8 @@ protected:
 
     // The child class should override this function to update the UI values after the data object has been modified. Super call is not needed
     virtual void OnOwingListDataObjectModified(UListDataObject_Base *OwningModifiedData, EOptionsListDataModifyReason ModifyReason);
+
+    void SelectThisEntryWidget();
 
 private:
     //**** Bound Widgets ****/
