@@ -1,12 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Widgets/Components/FrontendCommonButtonBase.h"
 
 #include "CommonTextBlock.h"
 
 #include "Subsystems/FrontendUISubsystem.h"
-
 
 void UFrontendCommonButtonBase::SetButtonText(FText InText)
 {
@@ -16,8 +14,7 @@ void UFrontendCommonButtonBase::SetButtonText(FText InText)
     }
 }
 
-
-void UFrontendCommonButtonBase::NativePreConstruct() 
+void UFrontendCommonButtonBase::NativePreConstruct()
 {
     Super::NativePreConstruct();
 
@@ -50,3 +47,5 @@ void UFrontendCommonButtonBase::NativeOnUnhovered()
 
     UFrontendUISubsystem::Get(this)->OnButtonDescriptionTextUpdated.Broadcast(this, FText::GetEmpty());
 }
+
+FText UFrontendCommonButtonBase::GetButtonDisplayText() const { return CommonTextBlock_ButtonText ? CommonTextBlock_ButtonText->GetText() : FText(); }

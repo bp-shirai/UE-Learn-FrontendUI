@@ -38,6 +38,10 @@ public:
 
 	void SetShouldApplySettingsImmediately(bool bShouldApplyRightAway) { bShouldApplyChangedImmediately = bShouldApplyRightAway; }
 	
+	virtual bool HasDefaultValue() const { return false; }
+	virtual bool CanResetBackToDefaultValue() const { return false; }
+	virtual bool TryResetBackToDefaultValue() { return false; }
+
 protected:
 	// Empty in base class. The child classes should override it to handle the initialization needed accordingly
 	virtual void OnDataObjectInitialized();

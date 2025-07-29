@@ -4,62 +4,71 @@
 
 #include "CoreMinimal.h"
 #include "Widgets/Widget_ActivatableBase.h"
+#include "FrontendTypes/FrontendEnumTypes.h"
 #include "Widget_OptionsScreen.generated.h"
 
 class UOptionsDataRegistry;
 class UFrontendTabListWidgetBase;
 class UFrontendCommonListView;
 class UWidget_OptionsDetailsView;
-
+class UListDataObject_Base;
 /**
  *
  */
 UCLASS(Abstract, BlueprintType, meta = (DisableNativeTick))
 class FRONTENDUI_API UWidget_OptionsScreen : public UWidget_ActivatableBase
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 protected:
-    //~ Begin UUserWidget Interface
-    virtual void NativeOnInitialized() override;
-    //~ End UUserWidget Interface
+	//~ Begin UUserWidget Interface
+	virtual void NativeOnInitialized() override;
+	//~ End UUserWidget Interface
 
-    //~ Begin UCommonActivatableWidget Interface
-    virtual void NativeOnActivated() override;
-    virtual void NativeOnDeactivated() override;
-    //~ End UCommonActivatableWidget Interface
+	//~ Begin UCommonActivatableWidget Interface
+	virtual void	 NativeOnActivated() override;
+	virtual void	 NativeOnDeactivated() override;
+	virtual UWidget* NativeGetDesiredFocusTarget() const override;
+	//~ End UCommonActivatableWidget Interface
 
-    UOptionsDataRegistry *GetOrCreateDataRegistry();
+	UOptionsDataRegistry* GetOrCreateDataRegistry();
 
 private:
-    void OnResetBoundActionTriggered();
-    void OnBackBoundActionTriggered();
+	void OnResetBoundActionTriggered();
+	void OnBackBoundActionTriggered();
 
-    UFUNCTION()
-    void OnOptionsTabSelected(FName TabID);
+	UFUNCTION()
+	void OnOptionsTabSelected(FName TabID);
 
-    void OnListViewItemHovered(UObject *InHoveredItem, bool bWasHovered);
-    void OnListViewItemSelected(UObject *InSelectedItem);
+	void OnListViewItemHovered(UObject* InHoveredItem, bool bWasHovered);
+	void OnListViewItemSelected(UObject* InSelectedItem);
 
-    FString TryGetEntryWidgetClassName(UObject *InOwningListItem) const;
+	FString TryGetEntryWidgetClassName(UObject* InOwningListItem) const;
 
-    //***** Bound Widgets *****/
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UFrontendTabListWidgetBase> TabListWidget_OptionsTabs;
+	void OnListViewListDataModified(UListDataObject_Base* ModifiedData, EOptionsListDataModifyReason ModifiedReason);
 
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UFrontendCommonListView> CommonListView_OptionsList;
+	//***** Bound Widgets *****/
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UFrontendTabListWidgetBase> TabListWidget_OptionsTabs;
 
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UWidget_OptionsDetailsView> DetailsView_ListEntryInfo;
-    //***** Bound Widgets *****/
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UFrontendCommonListView> CommonListView_OptionsList;
 
-    // Handle the creation of data in the options screen. Direct access to this variable is forbidden
-    UPROPERTY(Transient)
-    TObjectPtr<UOptionsDataRegistry> OwningDataRegistry;
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UWidget_OptionsDetailsView> DetailsView_ListEntryInfo;
+	//***** Bound Widgets *****/
 
-    UPROPERTY(EditDefaultsOnly, Category = "Frontend Options Screen", meta = (RowType = "/Script/CommonUI.CommonInputActionDataBase"))
-    FDataTableRowHandle ResetAction;
+	// Handle the creation of data in the options screen. Direct access to this variable is forbidden
+	UPROPERTY(Transient)
+	TObjectPtr<UOptionsDataRegistry> OwningDataRegistry;
 
-    FUIActionBindingHandle ResetActionHandle;
+	UPROPERTY(EditDefaultsOnly, Category = "Frontend Options Screen", meta = (RowType = "/Script/CommonUI.CommonInputActionDataBase"))
+	FDataTableRowHandle ResetAction;
+
+	FUIActionBindingHandle ResetActionHandle;
+
+	UPROPERTY(Transient)
+	TArray<UListDataObject_Base*> ResettableDataArray;
+
+	bool bIsResettingData = false;
 };
